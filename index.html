@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Quote app</title>
+  <link rel="stylesheet" href="quote.css"/>
+
+</head>
+
+<body>
+
+  <div id="quoteapp">
+
+    <header>
+      <h1>Quote app</h1>
+      <input id="text" type="text" placeholder="Text you want to quote.">
+      <input id="author" type="text" placeholder="Author of the text.">
+    </header>
+
+    <section id="main">
+      <ul id="quote-list"></ul>
+    </section>
+
+    <footer>
+      <a id="clear-quotes">Clear quotes</a>
+      <div id="message-count"></div>
+    </footer>
+
+  </div>
+
+  <div id="instructions">
+    Write a text and a author you want to quote and wait for magic.
+  </div>
+
+  <div id="credits">
+    Created by
+    <br />
+    PL industries.
+  </div>
+
+  <script src="node_modules/jquery/dist/jquery.js"></script>
+  <script src="node_modules/backbone/node_modules/underscore/underscore.js"></script>
+  <script src="node_modules/backbone/backbone.js"></script>
+  <script src="quote.js"></script>
+
+  <!-- Templates -->
+
+  <script type="text/template" id="quote-template">
+    <div class="view">
+      <label class="text"><%- text %> -- </label>
+      <label class="author"><%- author %></label>
+      <a class="destroy"></a>
+    </div>
+  </script>
+
+  </body>
+</html>
