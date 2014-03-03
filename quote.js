@@ -5,7 +5,8 @@ $(function(){
         defaults: function() {
             return {
                 text: null,
-                author: null
+                author: null,
+                image: null
             };
         },
     });
@@ -65,6 +66,7 @@ $(function(){
 
             this.text = this.$("#text");
             this.author = this.$("#author");
+            this.image = this.$("#image");
 
             this.listenTo(Quotes, 'add', this.addOne);
             this.listenTo(Quotes, 'all', this.render);
