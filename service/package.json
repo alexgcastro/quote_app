@@ -1,10 +1,10 @@
 {
-  "name": "quote-server",
-  "description": "Create images with quotes",
-  "version": "0.0.1",
-  "private": true,
-  "dependencies": {
-    "restify": "2.6.1",
-    "temp": "0.7.0"
-  }
+    "name": "quote-server",
+    "description": "Create images with quotes",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "restify": "2.6.1",
+        "temp": "0.7.0"
+    }
 }
