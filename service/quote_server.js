@@ -1,9 +1,16 @@
 
+// Includes.
 var restify = require('restify');
+var temp = require('temp');
 var server = restify.createServer();
 var exec = require('child_process').exec;
+
+// Variables.
 var Quotes = [];
 var id = 1;
+
+// Defines.
+var tempDirname = 'generated_images';
 
 function addHeaders(res) {
   res.header('Access-Control-Allow-Origin ', '*');
@@ -33,12 +40,14 @@ function log_error(error, stdout, stderr)
 function generateImage(res, model)
 {
     var text = model.text+'\n\n\n'+model.author;
-    var cmd = 'pango-view --background=#80A0C6 --align=center --font="sans bold 18" --width=350 --hinting=full --language=es --no-display --output=./generated_images/thetextimage.png --text="' + text + '"';
+    var tempFilename = temp.path({dir: tempDirname, prefix: 'quote', suffix: '.png'});
+
+    var cmd = 'pango-view --background=#80A0C6 --align=center --font="sans bold 18" --width=350 --hinting=full --language=es --no-display --output=./' + tempFilename + ' --text="' + text + '"';
 
     var child = exec(cmd, log_error);
 
     child.on('exit', function (code, signal) {
-        model.image = 'http://localhost:8080/generated_images/thetextimage.png';
+        model.image = 'http://localhost:8080/' + tempFilename;
         res.send(model);
     });
 }
@@ -91,7 +100,7 @@ server.get('/quote/:id', respond);
 server.get('/quote', respond);
 
 server.get(/\/generated_images\/?.*/, restify.serveStatic({
-    directory: './generated_images',
+    directory: './' + tempDirname,
     maxAge: 0
 }));
 
