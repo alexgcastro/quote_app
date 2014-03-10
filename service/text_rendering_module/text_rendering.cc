@@ -7,43 +7,63 @@
 using namespace v8;
 
 static void
-draw_text (cairo_t *cr, Local<String> stringText)
+render_blue_template(cairo_surface_t* surface, char* text)
 {
-#define FONT "Sans Bold 18"
+  cairo_t *cr;
 
   PangoLayout *layout;
   PangoFontDescription *desc;
-  char *text;
 
-  cairo_translate (cr, 225, 10);
+  cr = cairo_create(surface);
 
-  layout = pango_cairo_create_layout (cr);
+  cairo_set_source_rgb(cr, 0.5, 0.625, 0.773);
+  cairo_paint(cr);
 
-  text = (char *)malloc(stringText->Utf8Length()+1);
-  stringText->WriteUtf8(text);
+  layout = pango_cairo_create_layout(cr);
 
-  pango_layout_set_text (layout, text, -1);
-  free(text);
-  desc = pango_font_description_from_string (FONT);
-  pango_layout_set_font_description (layout, desc);
-  pango_font_description_free (desc);
-  pango_layout_set_alignment (layout, PANGO_ALIGN_CENTER);
-  pango_layout_set_width (layout, 700);
+  pango_layout_set_text(layout, text, -1);
+  desc = pango_font_description_from_string("Sans Bold 20");
+  pango_layout_set_font_description(layout, desc);
+  pango_font_description_free(desc);
+  pango_layout_set_width(layout, pango_units_from_double(600));
+  pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
 
-  cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
+  cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
 
-  pango_cairo_show_layout (cr, layout);
+  cairo_move_to(cr, 25, 50);
 
-  g_object_unref (layout);
+  pango_cairo_show_layout(cr, layout);
+
+  g_object_unref(layout);
+
+  cairo_destroy(cr);
+}
+
+static void
+generate_image(char* text, char* filename)
+{
+  cairo_status_t status;
+  cairo_surface_t* surface;
+
+  surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+                                       650, 750);
+  /* Choose the right template to render.*/
+  render_blue_template(surface, text);
+
+  status = cairo_surface_write_to_png(surface, filename);
+  cairo_surface_destroy(surface);
+
+  if (status != CAIRO_STATUS_SUCCESS) {
+      g_printerr("Could not save png to '%s'\n", filename);
+  }
 }
 
 Handle<Value> Render(const Arguments& args) {
   HandleScope scope;
-  cairo_t *cr;
-  Local<String> stringFilename = Local<String>::Cast(args[0]);
+  Local<String> stringFilename;
+  Local<String> stringText;
   char *filename;
-  cairo_status_t status;
-  cairo_surface_t *surface;
+  char *text;
 
   if (args.Length() < 2) {
     ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
@@ -55,27 +75,21 @@ Handle<Value> Render(const Arguments& args) {
     return scope.Close(Undefined());
   }
 
-  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
-                                        450, 600);
+  stringFilename = Local<String>::Cast(args[0]);
+  stringText = Local<String>::Cast(args[1]);
 
-  cr = cairo_create (surface);
-
-  cairo_set_source_rgb (cr, 0.5, 0.625, 0.773);
-  cairo_paint (cr);
-  draw_text (cr, Local<String>::Cast(args[1]));
-  cairo_destroy (cr);
+  text = (char *)malloc(stringText->Utf8Length()+1);
+  stringText->WriteUtf8(text);
 
   filename = (char *)malloc(stringFilename->Utf8Length()+1);
   stringFilename->WriteUtf8(filename);
-  status = cairo_surface_write_to_png (surface, filename);
-  cairo_surface_destroy (surface);
 
-  if (status != CAIRO_STATUS_SUCCESS) {
-      g_printerr ("Could not save png to '%s'\n", filename);
-  }
+  generate_image(text, filename);
 
   free(filename);
-  return scope.Close(args[1]);
+  free(text);
+
+  return scope.Close(String::Empty());
 }
 
 void init(Handle<Object> exports) {

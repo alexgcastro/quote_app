@@ -12,7 +12,7 @@ body {
 	line-height: 1.4em;
 	background: #eeeeee;
 	color: #333333;
-	width: 520px;
+	width: 700px;
 	margin: 0 auto;
 	-webkit-font-smoothing: antialiased;
 }
@@ -41,7 +41,7 @@ body {
 }
 
 #quoteapp input[type="text"] {
-	width: 466px;
+	width: 640px;
 	font-size: 24px;
 	font-family: inherit;
 	line-height: 1.4em;
