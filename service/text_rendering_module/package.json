@@ -1,0 +1,7 @@
+{
+  "name": "text_rendering",
+  "version": "0.0.1",
+  "description": "Node.js text tendering module",
+  "private": true,
+  "gypfile": true
+}

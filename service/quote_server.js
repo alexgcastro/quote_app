@@ -4,6 +4,7 @@ var restify = require('restify');
 var temp = require('temp');
 var server = restify.createServer();
 var exec = require('child_process').exec;
+var text_rendering = require('./text_rendering_module/build/Release/text_rendering');
 
 // Variables.
 var Quotes = [];
@@ -42,14 +43,9 @@ function generateImage(res, model)
     var text = model.text+'\n\n\n'+model.author;
     var tempFilename = temp.path({dir: tempDirname, prefix: 'quote', suffix: '.png'});
 
-    var cmd = 'pango-view --background=#80A0C6 --align=center --font="sans bold 18" --width=350 --hinting=full --language=es --no-display --output=./' + tempFilename + ' --text="' + text + '"';
-
-    var child = exec(cmd, log_error);
-
-    child.on('exit', function (code, signal) {
-        model.image = 'http://localhost:8080/' + tempFilename;
-        res.send(model);
-    });
+    text_rendering.render(tempFilename, text);
+    model.image = 'http://localhost:8080/' + tempFilename;
+    res.send(model);
 }
 
 function respond(req, res, next)
