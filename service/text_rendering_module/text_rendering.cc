@@ -7,19 +7,24 @@
 using namespace v8;
 
 static void
-render_blue_template(cairo_surface_t* surface, char* text)
+render_blue_template(cairo_surface_t* surface, char* text, PangoLayout *sizeLayout,
+                     cairo_t *sizeCr)
 {
   cairo_t *cr;
-
   PangoLayout *layout;
   PangoFontDescription *desc;
 
-  cr = cairo_create(surface);
+  if (!sizeLayout) {
+    cr = cairo_create(surface);
+    layout = pango_cairo_create_layout(cr);
+  }
+  else {
+    cr = sizeCr;
+    layout = sizeLayout;
+  }
 
   cairo_set_source_rgb(cr, 0.5, 0.625, 0.773);
   cairo_paint(cr);
-
-  layout = pango_cairo_create_layout(cr);
 
   pango_layout_set_text(layout, text, -1);
   desc = pango_font_description_from_string("Impact 28");
@@ -30,12 +35,42 @@ render_blue_template(cairo_surface_t* surface, char* text)
 
   cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
 
-  cairo_move_to(cr, 10, 50);
+  cairo_move_to(cr, 0, 50);
 
   pango_cairo_show_layout(cr, layout);
 
-  g_object_unref(layout);
+  if (!sizeLayout) {
+    g_object_unref(layout);
+    cairo_destroy(cr);
+  }
+}
 
+static void calculate_image_size(char *text, int* width, int* height)
+{
+  cairo_t *cr;
+  cairo_surface_t* surface;
+  PangoLayout *layout;
+
+  /* Load with 0x0 surface to calculate extends. */
+  surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+                                       0, 0);
+
+  cr = cairo_create(surface);
+
+  layout = pango_cairo_create_layout(cr);
+
+  /* Choose the right template to render. */
+  render_blue_template(surface, text, layout, cr);
+
+  pango_layout_get_pixel_size(layout, width, height);
+
+  if (width)
+    *width += 20;
+  if (height)
+    *height += 100;
+
+  g_object_unref(layout);
+  cairo_surface_destroy(surface);
   cairo_destroy(cr);
 }
 
@@ -44,11 +79,15 @@ generate_image(char* text, char* filename)
 {
   cairo_status_t status;
   cairo_surface_t* surface;
+  int width, height;
+
+  calculate_image_size(text, &width, &height);
 
   surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-                                       650, 900);
-  /* Choose the right template to render.*/
-  render_blue_template(surface, text);
+                                       width, height);
+
+  /* Choose the right template to render. */
+  render_blue_template(surface, text, NULL, NULL);
 
   status = cairo_surface_write_to_png(surface, filename);
   cairo_surface_destroy(surface);
