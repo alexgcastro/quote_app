@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include <pango/pangocairo.h>
 
+#define DEFAULT_LAYOUT_WIDTH 630
+
 using namespace v8;
 
 static void
 render_blue_template(cairo_surface_t* surface, char* text, PangoLayout *sizeLayout,
-                     cairo_t *sizeCr)
+                     cairo_t *sizeCr, int layoutWidth)
 {
   cairo_t *cr;
   PangoLayout *layout;
@@ -30,12 +32,12 @@ render_blue_template(cairo_surface_t* surface, char* text, PangoLayout *sizeLayo
   desc = pango_font_description_from_string("Impact 28");
   pango_layout_set_font_description(layout, desc);
   pango_font_description_free(desc);
-  pango_layout_set_width(layout, pango_units_from_double(630));
+  pango_layout_set_width(layout, pango_units_from_double(layoutWidth));
   pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
 
   cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
 
-  cairo_move_to(cr, 0, 50);
+  cairo_move_to(cr, 10, 50);
 
   pango_cairo_show_layout(cr, layout);
 
@@ -45,7 +47,7 @@ render_blue_template(cairo_surface_t* surface, char* text, PangoLayout *sizeLayo
   }
 }
 
-static void calculate_image_size(char *text, int* width, int* height)
+static void calculate_image_size(char *text, int* width, int* height, int layoutWidth)
 {
   cairo_t *cr;
   cairo_surface_t* surface;
@@ -60,12 +62,12 @@ static void calculate_image_size(char *text, int* width, int* height)
   layout = pango_cairo_create_layout(cr);
 
   /* Choose the right template to render. */
-  render_blue_template(surface, text, layout, cr);
+  render_blue_template(surface, text, layout, cr, layoutWidth);
 
   pango_layout_get_pixel_size(layout, width, height);
 
   if (width)
-    *width += 20;
+    *width += 40;
   if (height)
     *height += 100;
 
@@ -79,15 +81,23 @@ generate_image(char* text, char* filename)
 {
   cairo_status_t status;
   cairo_surface_t* surface;
-  int width, height;
+  int width, height, layoutWidth;
 
-  calculate_image_size(text, &width, &height);
+  layoutWidth = DEFAULT_LAYOUT_WIDTH;
+  calculate_image_size(text, &width, &height, layoutWidth);
+
+  while (height > 2*width) {
+    width = 0;
+    height = 0;
+    layoutWidth += 20;
+    calculate_image_size(text, &width, &height, layoutWidth);
+  }
 
   surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                        width, height);
 
   /* Choose the right template to render. */
-  render_blue_template(surface, text, NULL, NULL);
+  render_blue_template(surface, text, NULL, NULL, layoutWidth);
 
   status = cairo_surface_write_to_png(surface, filename);
   cairo_surface_destroy(surface);
