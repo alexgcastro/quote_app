@@ -22,15 +22,15 @@ render_blue_template(cairo_surface_t* surface, char* text)
   layout = pango_cairo_create_layout(cr);
 
   pango_layout_set_text(layout, text, -1);
-  desc = pango_font_description_from_string("Sans Bold 20");
+  desc = pango_font_description_from_string("Impact 28");
   pango_layout_set_font_description(layout, desc);
   pango_font_description_free(desc);
-  pango_layout_set_width(layout, pango_units_from_double(600));
+  pango_layout_set_width(layout, pango_units_from_double(630));
   pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
 
-  cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
+  cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
 
-  cairo_move_to(cr, 25, 50);
+  cairo_move_to(cr, 10, 50);
 
   pango_cairo_show_layout(cr, layout);
 
@@ -46,7 +46,7 @@ generate_image(char* text, char* filename)
   cairo_surface_t* surface;
 
   surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-                                       650, 750);
+                                       650, 900);
   /* Choose the right template to render.*/
   render_blue_template(surface, text);
 

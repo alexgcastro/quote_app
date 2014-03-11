@@ -40,7 +40,7 @@ function log_error(error, stdout, stderr)
 
 function generateImage(res, model)
 {
-    var text = model.text+'\n\n\n'+model.author;
+    var text = model.text+'\n\n'+model.author;
     var tempFilename = temp.path({dir: tempDirname, prefix: 'quote', suffix: '.png'});
 
     text_rendering.render(tempFilename, text);
