@@ -18,8 +18,10 @@ render_blue_template(cairo_surface_t* surface, char* text, char* author,
   PangoFontDescription *desc;
   PangoAttribute* attribute;
   PangoAttrList *attribs_list;
+  cairo_pattern_t *pattern;
   int text_byte_length;
   char * quote;
+  int width, height;
 
   if (!sizeLayout) {
     cr = cairo_create(surface);
@@ -30,9 +32,28 @@ render_blue_template(cairo_surface_t* surface, char* text, char* author,
     layout = sizeLayout;
   }
 
-  cairo_set_source_rgb(cr, 0.5, 0.625, 0.773);
+  /* Add a brackground frame. */
+  height = cairo_image_surface_get_height(surface);
+  pattern = cairo_pattern_create_linear(0, 0, 0, height);
+  cairo_pattern_add_color_stop_rgb(pattern, 0.0, 0.4, 0.525, 0.673);
+  cairo_pattern_add_color_stop_rgb(pattern, 0.05, 0.5, 0.625, 0.773);
+  cairo_pattern_add_color_stop_rgb(pattern, 0.95, 0.5, 0.625, 0.773);
+  cairo_pattern_add_color_stop_rgb(pattern, 1.0, 0.4, 0.525, 0.673);
+  cairo_set_source (cr, pattern);
   cairo_paint(cr);
+  cairo_pattern_destroy(pattern);
 
+  width = cairo_image_surface_get_width(surface);
+  pattern = cairo_pattern_create_linear(0, 0, width, 0);
+  cairo_pattern_add_color_stop_rgba(pattern, 0.0, 0.55, 0.55, 0.55, 0.5);
+  cairo_pattern_add_color_stop_rgba(pattern, 0.05, 0.55, 0.55, 0.55, 0.0);
+  cairo_pattern_add_color_stop_rgba(pattern, 0.95, 0.55, 0.55, 0.55, 0.0);
+  cairo_pattern_add_color_stop_rgba(pattern, 1.0, 0.55, 0.55, 0.55, 0.5);
+  cairo_set_source (cr, pattern);
+  cairo_paint(cr);
+  cairo_pattern_destroy(pattern);
+
+  /* Render text. */
   quote = g_strconcat(text, "\n\n", author, NULL);
   text_byte_length = strlen(text);
 
