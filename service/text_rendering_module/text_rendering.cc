@@ -132,6 +132,9 @@ generate_image(char* text, char* author, char* filename)
   layoutWidth = DEFAULT_LAYOUT_WIDTH;
   calculate_image_size(text, author,  &width, &height, layoutWidth);
 
+  if (width < layoutWidth)
+    width = layoutWidth;
+
   while (height > 2*width) {
     width = 0;
     height = 0;
