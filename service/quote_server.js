@@ -65,11 +65,9 @@ function respond(req, res, next)
     }
 
     if (req.params.id != undefined)
-        res.send(JSON.stringify(Quotes[req.params.id]));
-    else if (Quotes.length > 0)
-        res.send(JSON.stringify(Quotes));
+        res.send(200, JSON.stringify(Quotes[req.params.id]));
 
-    res.send(200, '');
+    res.send(200, JSON.stringify(Quotes));
 }
 
 // CORS activation.
