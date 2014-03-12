@@ -5,14 +5,17 @@
 #include <string.h>
 #include <pango/pangocairo.h>
 
-#define DEFAULT_LAYOUT_WIDTH 630
-
 using namespace v8;
 
 static void
 render_blue_template(cairo_surface_t* surface, char* text, char* author,
                      PangoLayout *sizeLayout, cairo_t *sizeCr, int layoutWidth)
 {
+#define DEFAULT_LAYOUT_WIDTH 630
+#define FONT "Impact "
+#define TEXT_FONT FONT"28"
+#define AUTHOR_FONT FONT"18"
+
   cairo_t *cr;
   PangoLayout *layout;
   PangoFontDescription *desc;
@@ -61,13 +64,13 @@ render_blue_template(cairo_surface_t* surface, char* text, char* author,
 
   attribs_list = pango_attr_list_new ();
 
-  desc = pango_font_description_from_string("Impact 28");
+  desc = pango_font_description_from_string(TEXT_FONT);
   attribute = pango_attr_font_desc_new(desc);
   attribute->start_index = 0;
   attribute->end_index = text_byte_length;
   pango_attr_list_insert(attribs_list, attribute);
 
-  desc = pango_font_description_from_string("Impact 18");
+  desc = pango_font_description_from_string(AUTHOR_FONT);
   attribute = pango_attr_font_desc_new(desc);
   attribute->start_index = text_byte_length;
   pango_attr_list_insert(attribs_list, attribute);
