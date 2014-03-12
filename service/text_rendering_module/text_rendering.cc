@@ -5,13 +5,14 @@
 #include <string.h>
 #include <pango/pangocairo.h>
 
+#define DEFAULT_LAYOUT_WIDTH 630
+
 using namespace v8;
 
 static void
 render_blue_template(cairo_surface_t* surface, char* text, char* author,
                      PangoLayout *sizeLayout, cairo_t *sizeCr, int layoutWidth)
 {
-#define DEFAULT_LAYOUT_WIDTH 630
 #define FONT "Impact "
 #define TEXT_FONT FONT"28"
 #define AUTHOR_FONT FONT"18"
