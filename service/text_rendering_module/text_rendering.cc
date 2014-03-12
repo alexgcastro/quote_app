@@ -165,16 +165,18 @@ Handle<Value> Render(const Arguments& args) {
   Local<String> stringFilename;
   Local<String> stringText;
   Local<String> stringAuthor;
+  Local<Function> callback;
   char *filename;
   char *text;
   char *author;
 
-  if (args.Length() < 3) {
+  if (args.Length() < 4) {
     ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
     return scope.Close(Undefined());
   }
 
-  if (!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
+  if (!args[0]->IsString() || !args[1]->IsString() ||
+      !args[2]->IsString() || !args[3]->IsFunction()) {
     ThrowException(Exception::TypeError(String::New("Wrong arguments")));
     return scope.Close(Undefined());
   }
@@ -197,6 +199,9 @@ Handle<Value> Render(const Arguments& args) {
   free(filename);
   free(text);
   free(author);
+
+  callback = Local<Function>::Cast(args[3]);
+  callback->Call(Context::GetCurrent()->Global(), 0, NULL);
 
   return scope.Close(String::Empty());
 }

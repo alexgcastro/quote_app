@@ -28,9 +28,10 @@ function generateImage(res, model)
 {
     var tempFilename = temp.path({dir: tempDirname, prefix: 'quote', suffix: '.png'});
 
-    text_rendering.render(tempFilename, model.text, model.author);
-    model.image = 'http://localhost:8080/' + tempFilename;
-    res.send(200, model);
+    text_rendering.render(tempFilename, model.text, model.author, function () {
+        model.image = 'http://localhost:8080/' + tempFilename;
+        res.send(200, model);
+    });
 }
 
 function respond(req, res, next)
