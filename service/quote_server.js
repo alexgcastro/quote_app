@@ -24,14 +24,6 @@ function removeById(id)
     }
 }
 
-function log_error(error, stdout, stderr)
-{
-    if (stdout) console.log('pango-view_stdout: ' + stdout);
-    if (stderr) console.log('pango-view_stderr: ' + stderr);
-    if (error !== null)
-        console.log('node-pango-view error: ' + error);
-}
-
 function generateImage(res, model)
 {
     var tempFilename = temp.path({dir: tempDirname, prefix: 'quote', suffix: '.png'});
