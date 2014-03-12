@@ -84,7 +84,7 @@ render_blue_template(cairo_surface_t* surface, char* text, char* author,
 
   cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
 
-  cairo_move_to(cr, 10, 50);
+  cairo_move_to(cr, (width-layoutWidth)/2, 50);
 
   pango_cairo_show_layout(cr, layout);
 
