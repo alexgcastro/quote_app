@@ -9,6 +9,13 @@
 
 using namespace v8;
 
+typedef struct AsyncData {
+  char *filename;
+  char *text;
+  char *author;
+  Persistent<Function> callback;
+} AsyncData;
+
 static void
 render_blue_template(cairo_surface_t* surface, char* text, char* author,
                      PangoLayout *sizeLayout, cairo_t *sizeCr, int layoutWidth)
@@ -127,11 +134,15 @@ static void calculate_image_size(char *text, char* author, int* width, int* heig
 }
 
 static void
-generate_image(char* text, char* author, char* filename)
+generate_image(uv_work_t *work_request)
 {
   cairo_status_t status;
   cairo_surface_t* surface;
   int width, height, layoutWidth;
+  AsyncData *asyncData = (AsyncData *)work_request->data;
+  char *text = asyncData->text;
+  char *author= asyncData->author;
+  char *filename = asyncData->filename;
 
   layoutWidth = DEFAULT_LAYOUT_WIDTH;
   calculate_image_size(text, author,  &width, &height, layoutWidth);
@@ -160,15 +171,31 @@ generate_image(char* text, char* author, char* filename)
   }
 }
 
+static void
+generate_image_after(uv_work_t *work_request, int status) {
+  AsyncData *asyncData = (AsyncData *)work_request->data;
+
+  asyncData->callback->Call(Context::GetCurrent()->Global(), 0, NULL);
+
+  free(asyncData->filename);
+  free(asyncData->text);
+  free(asyncData->author);
+  asyncData->callback.Dispose();
+
+  delete asyncData;
+  delete work_request;
+}
+
 Handle<Value> Render(const Arguments& args) {
   HandleScope scope;
   Local<String> stringFilename;
   Local<String> stringText;
   Local<String> stringAuthor;
-  Local<Function> callback;
+  AsyncData *asyncData;
   char *filename;
   char *text;
   char *author;
+  uv_work_t *workRequest;
 
   if (args.Length() < 4) {
     ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
@@ -194,16 +221,23 @@ Handle<Value> Render(const Arguments& args) {
   filename = (char *)malloc(stringFilename->Utf8Length()+1);
   stringFilename->WriteUtf8(filename);
 
-  generate_image(text, author, filename);
+  workRequest = new uv_work_t;
+  asyncData = new AsyncData;
+  workRequest->data = asyncData;
 
-  free(filename);
-  free(text);
-  free(author);
+  asyncData->filename = filename;
+  asyncData->text = text;
+  asyncData->author = author;
+  asyncData->callback = Persistent<Function>::New(Local<Function>::Cast(args[3]));
 
-  callback = Local<Function>::Cast(args[3]);
-  callback->Call(Context::GetCurrent()->Global(), 0, NULL);
+  uv_queue_work(
+    uv_default_loop(),
+    workRequest,
+    generate_image,
+    generate_image_after
+  );
 
-  return scope.Close(String::Empty());
+  return scope.Close(Undefined());
 }
 
 void init(Handle<Object> exports) {
