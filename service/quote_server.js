@@ -13,12 +13,6 @@ var id = 1;
 // Defines.
 var tempDirname = 'generated_images';
 
-function addHeaders(res) {
-    res.header('Access-Control-Allow-Origin ', '*');
-    res.header('Access-Control-Allow-Method', 'POST, GET, PUT, DELETE, OPTIONS' );
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, X-File-Name, Content-Type, Cache-Control' );
-}
-
 function removeById(id)
 {
     for(var i=0; i < Quotes.length; i++)
@@ -44,14 +38,11 @@ function generateImage(res, model)
 
     text_rendering.render(tempFilename, model.text, model.author);
     model.image = 'http://localhost:8080/' + tempFilename;
-    res.send(model);
+    res.send(200, model);
 }
 
 function respond(req, res, next)
 {
-
-    addHeaders(res);
-
     if ('HEAD' == req.method) {
         res.send(200, 'OK');
         return;
@@ -70,6 +61,7 @@ function respond(req, res, next)
     }
 
     if (req.isUpload()) {
+        /* Never chunked. */
         req.on('data', function (data) {
             var model = JSON.parse(data);
             model.id = id++;
@@ -87,6 +79,10 @@ function respond(req, res, next)
 
     res.send(200, '');
 }
+
+// CORS activation.
+server.use(restify.CORS());
+server.use(restify.fullResponse());
 
 server.head('/quote', respond);
 server.del('/quote/:id', respond);
