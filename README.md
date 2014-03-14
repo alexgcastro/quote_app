@@ -1,4 +1,6 @@
-quote_app
-=========
+Quote application
+=================
 
-Quoting is fun
+Quoting is fun.
+
+This application creates quote images from text.

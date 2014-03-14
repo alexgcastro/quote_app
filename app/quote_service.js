@@ -4,7 +4,7 @@ var restify = require('restify');
 var temp = require('temp');
 var server = restify.createServer();
 var exec = require('child_process').exec;
-var text_rendering = require('./text_rendering_module/build/Release/text_rendering');
+var text_rendering = require('./Release/text_rendering');
 
 // Variables.
 var Quotes = [];
