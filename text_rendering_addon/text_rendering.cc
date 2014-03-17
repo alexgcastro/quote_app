@@ -33,6 +33,7 @@ render_blue_template(cairo_surface_t* surface, char* text, char* author,
 #define TEXT_FONT FONT"28"
 #define AUTHOR_FONT FONT"18"
 #define FRAME_SIDE_PIXELS 20.0
+#define SHADOW_OFFSET 1
   cairo_t *cr;
   PangoLayout *layout;
   PangoFontDescription *desc;
@@ -102,7 +103,15 @@ render_blue_template(cairo_surface_t* surface, char* text, char* author,
   pango_layout_set_width(layout, pango_units_from_double(layoutWidth));
   pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
 
+  cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+
+  if (width > 0)
+    cairo_move_to(cr, (width-layoutWidth)/2+SHADOW_OFFSET, 50+SHADOW_OFFSET);
+
+  pango_cairo_show_layout(cr, layout);
+
   cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
+  pango_cairo_update_layout (cr, layout);
 
   if (width > 0)
     cairo_move_to(cr, (width-layoutWidth)/2, 50);
