@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <v8.h>
 
-#include "template_bluex.h"
+#include "TemplateBlueX.h"
 
 #define DEFAULT_LAYOUT_WIDTH 630
 
@@ -14,12 +14,13 @@ typedef struct AsyncData {
   char *filename;
   char *text;
   char *author;
+  Quote::Template* imageTemplate;
   Persistent<Function> callback;
 } AsyncData;
 
 static void
 calculate_image_size(char *text, char* author, int* width, int* height,
-                     int layoutWidth)
+                     int layoutWidth, Quote::Template* imageTemplate)
 {
   cairo_t *cr;
   cairo_surface_t* surface;
@@ -34,7 +35,7 @@ calculate_image_size(char *text, char* author, int* width, int* height,
   layout = pango_cairo_create_layout(cr);
 
   /* Choose the right template to render. */
-  render(surface, text, author, layout, cr, layoutWidth);
+  imageTemplate->render(surface, text, author, layout, cr, layoutWidth);
 
   pango_layout_get_pixel_size(layout, width, height);
 
@@ -58,9 +59,10 @@ generate_image(uv_work_t *work_request)
   char *text = asyncData->text;
   char *author= asyncData->author;
   char *filename = asyncData->filename;
+  Quote::Template* imageTemplate = asyncData->imageTemplate;
 
   layoutWidth = DEFAULT_LAYOUT_WIDTH;
-  calculate_image_size(text, author,  &width, &height, layoutWidth);
+  calculate_image_size(text, author,  &width, &height, layoutWidth, imageTemplate);
 
   if (width < layoutWidth)
     width = layoutWidth;
@@ -69,14 +71,14 @@ generate_image(uv_work_t *work_request)
     width = 0;
     height = 0;
     layoutWidth += 20;
-    calculate_image_size(text, author, &width, &height, layoutWidth);
+    calculate_image_size(text, author, &width, &height, layoutWidth, imageTemplate);
   }
 
   surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                        width, height);
 
   /* Choose the right template to render. */
-  render(surface, text, author, NULL, NULL, layoutWidth);
+  imageTemplate->render(surface, text, author, NULL, NULL, layoutWidth);
 
   status = cairo_surface_write_to_png(surface, filename);
   cairo_surface_destroy(surface);
@@ -96,6 +98,7 @@ generate_image_after(uv_work_t *work_request, int status) {
   free(asyncData->text);
   free(asyncData->author);
   asyncData->callback.Dispose();
+  delete asyncData->imageTemplate;
 
   delete asyncData;
   delete work_request;
@@ -111,6 +114,7 @@ Handle<Value> Render(const Arguments& args) {
   char *text;
   char *author;
   uv_work_t *workRequest;
+  Quote::Template* imageTemplate;
 
   if (args.Length() < 4) {
     ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
@@ -137,12 +141,14 @@ Handle<Value> Render(const Arguments& args) {
   stringFilename->WriteUtf8(filename);
 
   workRequest = new uv_work_t;
-  asyncData = new AsyncData;
+  imageTemplate = new Quote::TemplateBlueX();
+  asyncData = new AsyncData();
   workRequest->data = asyncData;
 
   asyncData->filename = filename;
   asyncData->text = text;
   asyncData->author = author;
+  asyncData->imageTemplate = imageTemplate;
   asyncData->callback = Persistent<Function>::New(Local<Function>::Cast(args[3]));
 
   uv_queue_work(

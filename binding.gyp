@@ -2,8 +2,10 @@
   "targets": [
     {
       "target_name": "text_rendering",
-      "sources": [ "text_rendering_addon/text_rendering.cc",
-                   "text_rendering_addon/template_bluex.cc"],
+      "sources": [ "text_rendering_addon/Template.h",
+                   "text_rendering_addon/TemplateBlueX.h",
+                   "text_rendering_addon/TemplateBlueX.cc",
+                   "text_rendering_addon/text_rendering.cc"],
       'cflags': [
         '<!@(pkg-config --cflags pangocairo)',
       ],

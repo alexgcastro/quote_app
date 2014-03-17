@@ -1,5 +1,5 @@
 
-#include "template_bluex.h"
+#include "TemplateBlueX.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +9,16 @@
 #define AUTHOR_FONT FONT"18"
 #define FRAME_SIDE_PIXELS 20.0
 #define SHADOW_OFFSET 1
+
+namespace Quote {
+
+TemplateBlueX::TemplateBlueX()
+{
+}
+
+TemplateBlueX::~TemplateBlueX()
+{
+}
 
 static void
 render_side_gradient(cairo_pattern_t* pattern, double frame_width)
@@ -20,8 +30,8 @@ render_side_gradient(cairo_pattern_t* pattern, double frame_width)
 }
 
 void
-render(cairo_surface_t* surface, char* text, char* author,
-       PangoLayout *sizeLayout, cairo_t *sizeCr, int layoutWidth)
+TemplateBlueX::render(cairo_surface_t* surface, char* text, char* author,
+                      PangoLayout *sizeLayout, cairo_t *sizeCr, int layoutWidth)
 {
   cairo_t *cr;
   PangoLayout *layout;
@@ -114,3 +124,5 @@ render(cairo_surface_t* surface, char* text, char* author,
 
   free(quote);
 }
+
+} // namespace Quote.
