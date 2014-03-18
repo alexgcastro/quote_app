@@ -1,4 +1,7 @@
 
+#ifndef Template_h
+#define Template_h
+
 #include <pango/pangocairo.h>
 
 namespace Quote {
@@ -10,3 +13,5 @@ public:
 };
 
 } // namespace Quote.
+
+#endif // Template_h

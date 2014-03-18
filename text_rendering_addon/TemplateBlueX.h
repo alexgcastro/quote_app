@@ -1,4 +1,7 @@
 
+#ifndef TemplateBlueX_h
+#define TemplateBlueX_h
+
 #include "Template.h"
 
 namespace Quote {
@@ -11,3 +14,5 @@ public:
 };
 
 } // namespace Quote.
+
+#endif // TemplateBlueX_h
