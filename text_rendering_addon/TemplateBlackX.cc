@@ -53,18 +53,18 @@ TemplateBlackX::render(cairo_surface_t* surface, char* text, char* author,
     double frame_width;
     cairo_surface_t *image;
 
-    image = cairo_image_surface_create_from_png ("build/black_texture_tile.png");
-    pattern = cairo_pattern_create_for_surface (image);
+    image = cairo_image_surface_create_from_png("build/black_texture_tile.png");
+    pattern = cairo_pattern_create_for_surface(image);
     cairo_pattern_set_extend (pattern, CAIRO_EXTEND_REPEAT);
-    cairo_set_source (cr, pattern);
+    cairo_set_source(cr, pattern);
     cairo_paint(cr);
     cairo_pattern_destroy(pattern);
-    cairo_surface_destroy (image);
+    cairo_surface_destroy(image);
 
     pattern = cairo_pattern_create_linear(0, 0, 0, height);
     frame_width = FRAME_SIDE_PIXELS/height;
     render_frame_gradient(pattern, frame_width, FRAME_DARKNESS);
-    cairo_set_source (cr, pattern);
+    cairo_set_source(cr, pattern);
     cairo_paint(cr);
     cairo_pattern_destroy(pattern);
 
@@ -72,7 +72,7 @@ TemplateBlackX::render(cairo_surface_t* surface, char* text, char* author,
     pattern = cairo_pattern_create_linear(0, 0, width, 0);
     frame_width = FRAME_SIDE_PIXELS/width;
     render_frame_gradient(pattern, frame_width, FRAME_DARKNESS);
-    cairo_set_source (cr, pattern);
+    cairo_set_source(cr, pattern);
     cairo_paint(cr);
     cairo_pattern_destroy(pattern);
   }
@@ -83,7 +83,7 @@ TemplateBlackX::render(cairo_surface_t* surface, char* text, char* author,
 
   pango_layout_set_text(layout, quote, -1);
 
-  attribs_list = pango_attr_list_new ();
+  attribs_list = pango_attr_list_new();
 
   desc = pango_font_description_from_string(TEXT_FONT);
   attribute = pango_attr_font_desc_new(desc);
@@ -96,8 +96,8 @@ TemplateBlackX::render(cairo_surface_t* surface, char* text, char* author,
   attribute->start_index = text_byte_length;
   pango_attr_list_insert(attribs_list, attribute);
 
-  pango_layout_set_attributes (layout, attribs_list);
-  pango_attr_list_unref (attribs_list);
+  pango_layout_set_attributes(layout, attribs_list);
+  pango_attr_list_unref(attribs_list);
 
   pango_layout_set_width(layout, pango_units_from_double(layoutWidth));
   pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
@@ -110,7 +110,7 @@ TemplateBlackX::render(cairo_surface_t* surface, char* text, char* author,
   pango_cairo_show_layout(cr, layout);
 
   cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-  pango_cairo_update_layout (cr, layout);
+  pango_cairo_update_layout(cr, layout);
 
   if (width > 0)
     cairo_move_to(cr, (width-layoutWidth)/2, 50);
