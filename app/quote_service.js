@@ -28,7 +28,7 @@ function generateImage(res, model)
 {
     var tempFilename = temp.path({dir: tempDirname, prefix: 'quote', suffix: '.png'});
 
-    text_rendering.render(tempFilename, model.text, model.author, function () {
+    text_rendering.render(tempFilename, model.text, model.author, model.template, function () {
         model.image = 'http://localhost:8080/' + tempFilename;
         res.send(200, model);
     });
@@ -59,7 +59,7 @@ function respond(req, res, next)
             var model = JSON.parse(data);
             model.id = id++;
             Quotes.push(model);
-            console.log('Received quote: ' + model.id + ' ' + model.text + ' ' + model.author);
+            console.log('Received quote: ' + model.id + ' ' + model.text + ' ' + model.author + ' ' + model.template);
             generateImage(res, model);
         });
         return;

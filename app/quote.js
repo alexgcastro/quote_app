@@ -6,7 +6,8 @@ $(function(){
             return {
                 text: null,
                 author: null,
-                image: null
+                image: null,
+                template: null
             };
         },
     });
@@ -100,7 +101,7 @@ $(function(){
             if (e.keyCode != 13) return;
             if (!this.text.val() || (!this.author.val())) return;
 
-            Quotes.create({text: this.text.val(), author: this.author.val()});
+            Quotes.create({text: this.text.val(), author: this.author.val(), template: 2});
             this.text.val('');
             this.author.val('');
         },

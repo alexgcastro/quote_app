@@ -114,16 +114,17 @@ Handle<Value> Render(const Arguments& args) {
   char *filename;
   char *text;
   char *author;
+  uint32_t templateType;
   uv_work_t *workRequest;
   Quote::Template* imageTemplate;
 
-  if (args.Length() < 4) {
+  if (args.Length() < 5) {
     ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
     return scope.Close(Undefined());
   }
 
-  if (!args[0]->IsString() || !args[1]->IsString() ||
-      !args[2]->IsString() || !args[3]->IsFunction()) {
+  if (!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString() ||
+      !args[3]->IsUint32() || !args[4]->IsFunction()) {
     ThrowException(Exception::TypeError(String::New("Wrong arguments")));
     return scope.Close(Undefined());
   }
@@ -131,6 +132,7 @@ Handle<Value> Render(const Arguments& args) {
   stringFilename = Local<String>::Cast(args[0]);
   stringText = Local<String>::Cast(args[1]);
   stringAuthor = Local<String>::Cast(args[2]);
+  templateType = args[3]->Uint32Value();
 
   text = (char *)malloc(stringText->Utf8Length()+1);
   stringText->WriteUtf8(text);
@@ -142,8 +144,16 @@ Handle<Value> Render(const Arguments& args) {
   stringFilename->WriteUtf8(filename);
 
   workRequest = new uv_work_t;
-//  imageTemplate = new Quote::TemplateBlueX();
-  imageTemplate = new Quote::TemplateBlackX();
+
+  switch (templateType) {
+    case Quote::Template::BlueX:
+      imageTemplate = new Quote::TemplateBlueX();
+      break;
+    case Quote::Template::BlackX:
+    default:
+      imageTemplate = new Quote::TemplateBlackX();
+  }
+
   asyncData = new AsyncData();
   workRequest->data = asyncData;
 
@@ -151,7 +161,7 @@ Handle<Value> Render(const Arguments& args) {
   asyncData->text = text;
   asyncData->author = author;
   asyncData->imageTemplate = imageTemplate;
-  asyncData->callback = Persistent<Function>::New(Local<Function>::Cast(args[3]));
+  asyncData->callback = Persistent<Function>::New(Local<Function>::Cast(args[4]));
 
   uv_queue_work(
     uv_default_loop(),
