@@ -5,6 +5,7 @@
 #include <v8.h>
 
 #include "TemplateBlueX.h"
+#include "TemplateBlackX.h"
 
 #define DEFAULT_LAYOUT_WIDTH 630
 
@@ -141,7 +142,8 @@ Handle<Value> Render(const Arguments& args) {
   stringFilename->WriteUtf8(filename);
 
   workRequest = new uv_work_t;
-  imageTemplate = new Quote::TemplateBlueX();
+//  imageTemplate = new Quote::TemplateBlueX();
+  imageTemplate = new Quote::TemplateBlackX();
   asyncData = new AsyncData();
   workRequest->data = asyncData;
 

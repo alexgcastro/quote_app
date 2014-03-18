@@ -7,6 +7,8 @@
                    "text_rendering_addon/Template.h",
                    "text_rendering_addon/TemplateBlueX.h",
                    "text_rendering_addon/TemplateBlueX.cc",
+                   "text_rendering_addon/TemplateBlackX.h",
+                   "text_rendering_addon/TemplateBlackX.cc",
                    "text_rendering_addon/text_rendering.cc"],
       'cflags': [
         '<!@(pkg-config --cflags pangocairo)',

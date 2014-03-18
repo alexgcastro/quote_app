@@ -1,30 +1,30 @@
 
-#include "TemplateBlueX.h"
+#include "TemplateBlackX.h"
 
 #include <stdlib.h>
 #include <string.h>
 
 #include "TemplateUtils.h"
 
-#define FONT "Impact "
-#define TEXT_FONT FONT"24"
-#define AUTHOR_FONT FONT"14"
+#define FONT "Sans bold "
+#define TEXT_FONT FONT"28"
+#define AUTHOR_FONT FONT"18"
 #define FRAME_SIDE_PIXELS 20.0
-#define FRAME_DARKNESS 0.1
-#define SHADOW_OFFSET 1
+#define FRAME_DARKNESS 0.2
+#define SHADOW_OFFSET 2
 
 namespace Quote {
 
-TemplateBlueX::TemplateBlueX()
+TemplateBlackX::TemplateBlackX()
 {
 }
 
-TemplateBlueX::~TemplateBlueX()
+TemplateBlackX::~TemplateBlackX()
 {
 }
 
 void
-TemplateBlueX::render(cairo_surface_t* surface, char* text, char* author,
+TemplateBlackX::render(cairo_surface_t* surface, char* text, char* author,
                       PangoLayout *sizeLayout, cairo_t *sizeCr, int layoutWidth)
 {
   cairo_t *cr;
@@ -51,9 +51,15 @@ TemplateBlueX::render(cairo_surface_t* surface, char* text, char* author,
   if (height > 0) {
     cairo_pattern_t *pattern;
     double frame_width;
+    cairo_surface_t *image;
 
-    cairo_set_source_rgb(cr, 0.5, 0.625, 0.773);
+    image = cairo_image_surface_create_from_png ("build/black_texture_tile.png");
+    pattern = cairo_pattern_create_for_surface (image);
+    cairo_pattern_set_extend (pattern, CAIRO_EXTEND_REPEAT);
+    cairo_set_source (cr, pattern);
     cairo_paint(cr);
+    cairo_pattern_destroy(pattern);
+    cairo_surface_destroy (image);
 
     pattern = cairo_pattern_create_linear(0, 0, 0, height);
     frame_width = FRAME_SIDE_PIXELS/height;
@@ -96,14 +102,14 @@ TemplateBlueX::render(cairo_surface_t* surface, char* text, char* author,
   pango_layout_set_width(layout, pango_units_from_double(layoutWidth));
   pango_layout_set_alignment(layout, PANGO_ALIGN_CENTER);
 
-  cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+  cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
 
   if (width > 0)
     cairo_move_to(cr, (width-layoutWidth)/2+SHADOW_OFFSET, 50+SHADOW_OFFSET);
 
   pango_cairo_show_layout(cr, layout);
 
-  cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
+  cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
   pango_cairo_update_layout (cr, layout);
 
   if (width > 0)
