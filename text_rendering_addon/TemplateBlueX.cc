@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "TemplateUtils.h"
+
 #define FONT "Impact "
 #define TEXT_FONT FONT"28"
 #define AUTHOR_FONT FONT"18"
@@ -18,15 +20,6 @@ TemplateBlueX::TemplateBlueX()
 
 TemplateBlueX::~TemplateBlueX()
 {
-}
-
-static void
-render_side_gradient(cairo_pattern_t* pattern, double frame_width)
-{
-  cairo_pattern_add_color_stop_rgba(pattern, 0.0, 0.0, 0.0, 0.0, 0.1);
-  cairo_pattern_add_color_stop_rgba(pattern, frame_width, 0.0, 0.0, 0.0, 0.0);
-  cairo_pattern_add_color_stop_rgba(pattern, 1.0-frame_width, 0.0, 0.0, 0.0, 0.0);
-  cairo_pattern_add_color_stop_rgba(pattern, 1.0, 0.0, 0.0, 0.0, 0.1);
 }
 
 void
@@ -63,7 +56,7 @@ TemplateBlueX::render(cairo_surface_t* surface, char* text, char* author,
 
     pattern = cairo_pattern_create_linear(0, 0, 0, height);
     frame_width = FRAME_SIDE_PIXELS/height;
-    render_side_gradient(pattern, frame_width);
+    render_frame_gradient(pattern, frame_width);
     cairo_set_source (cr, pattern);
     cairo_paint(cr);
     cairo_pattern_destroy(pattern);
@@ -71,7 +64,7 @@ TemplateBlueX::render(cairo_surface_t* surface, char* text, char* author,
     width = cairo_image_surface_get_width(surface);
     pattern = cairo_pattern_create_linear(0, 0, width, 0);
     frame_width = FRAME_SIDE_PIXELS/width;
-    render_side_gradient(pattern, frame_width);
+    render_frame_gradient(pattern, frame_width);
     cairo_set_source (cr, pattern);
     cairo_paint(cr);
     cairo_pattern_destroy(pattern);
