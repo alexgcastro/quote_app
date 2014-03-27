@@ -1,8 +1,8 @@
 
 // Includes.
-var restify = require('restify');
+var express = require('express');
 var temp = require('temp');
-var server = restify.createServer();
+var app = express();
 var exec = require('child_process').exec;
 var text_rendering = require('./Release/text_rendering');
 
@@ -34,15 +34,17 @@ function generateImage(res, model)
     });
 }
 
+function isUpload(req)
+{
+    var method = req.method;
+
+    return (method === 'PATH' || method === 'POST' || method === 'PUT');
+}
+
 function respond(req, res, next)
 {
     if ('HEAD' == req.method) {
         res.send(200, 'OK');
-        return;
-    }
-
-    if ('OPTIONS' == req.method) {
-        res.send(203, 'OK');
         return;
     }
 
@@ -53,7 +55,7 @@ function respond(req, res, next)
         return;
     }
 
-    if (req.isUpload()) {
+    if (isUpload(req)) {
         /* Never chunked. */
         req.on('data', function (data) {
             var model = JSON.parse(data);
@@ -71,21 +73,27 @@ function respond(req, res, next)
     res.send(200, JSON.stringify(Quotes));
 }
 
-// CORS activation.
-server.use(restify.CORS());
-server.use(restify.fullResponse());
+var enableCORS = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
 
-server.head('/quote', respond);
-server.del('/quote/:id', respond);
-server.post('/quote', respond);
-server.get('/quote/:id', respond);
-server.get('/quote', respond);
+    if ('OPTIONS' == req.method)
+        res.send(203, 'OK');
+    else
+        next();
+};
 
-server.get(/\/generated_images\/?.*/, restify.serveStatic({
-    directory: './' + tempDirname,
-    maxAge: 0
-}));
+app.use(enableCORS);
 
-server.listen(8080, function() {
-    console.log('%s listening at %s', server.name, server.url);
+app.head('/quote', respond);
+app.del('/quote/:id', respond);
+app.post('/quote', respond);
+app.get('/quote/:id', respond);
+app.get('/quote', respond);
+
+app.use('/generated_images', express.static('./generated_images'), {maxAge: 0});
+
+var server = app.listen(8080, function() {
+    console.log('%s listening on %s', app.get('title'), server.address().port);
 });

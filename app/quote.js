@@ -20,10 +20,6 @@ $(function(){
 
         comparator: 'id',
 
-        parse: function(resp, options) {
-            return JSON.parse(resp);
-        }
-
     });
 
     var Quotes = new QuoteList;
