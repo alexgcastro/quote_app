@@ -34,7 +34,7 @@ module.exports = function(grunt) {
 
         clean: {
             dev: {
-                src: ['build', 'generated_images', 'node_modules']
+                src: ['build', 'node_modules']
             }
         }
 
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
 
     grunt.registerTask('cdirectory', 'Create generated images directory', function() {
-        grunt.file.mkdir('generated_images')
+        grunt.file.mkdir('build/generated_images')
     });
 
     grunt.registerTask('default', ['copy', 'concat', 'cdirectory']);

@@ -11,7 +11,7 @@ var Quotes = [];
 var id = 1;
 
 // Defines.
-var tempDirname = 'generated_images';
+var tempDirname = '/generated_images';
 
 function removeById(id)
 {
@@ -28,8 +28,8 @@ function generateImage(res, model)
 {
     var tempFilename = temp.path({dir: tempDirname, prefix: 'quote', suffix: '.png'});
 
-    text_rendering.render(tempFilename, model.text, model.author, model.template, function () {
-        model.image = 'http://localhost:8080/' + tempFilename;
+    text_rendering.render(__dirname + tempFilename, model.text, model.author, model.template, function () {
+        model.image = 'http://localhost:8080' + tempFilename;
         res.send(200, model);
     });
 }
@@ -92,7 +92,7 @@ app.post('/quote', respond);
 app.get('/quote/:id', respond);
 app.get('/quote', respond);
 
-app.use('/generated_images', express.static('./generated_images'), {maxAge: 0});
+app.use(tempDirname, express.static(__dirname + tempDirname), {maxAge: 0});
 
 var server = app.listen(8080, function() {
     console.log('%s listening on %s', app.get('title'), server.address().port);
