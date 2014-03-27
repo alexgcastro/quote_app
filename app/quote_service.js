@@ -94,6 +94,8 @@ app.get('/quote', respond);
 
 app.use(tempDirname, express.static(__dirname + tempDirname));
 
+app.set('title', 'Quote app');
+
 var server = app.listen(8080, function() {
     console.log('%s listening on %s', app.get('title'), server.address().port);
 });
