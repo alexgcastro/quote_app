@@ -92,7 +92,7 @@ app.post('/quote', respond);
 app.get('/quote/:id', respond);
 app.get('/quote', respond);
 
-app.use(tempDirname, express.static(__dirname + tempDirname), {maxAge: 0});
+app.use(tempDirname, express.static(__dirname + tempDirname));
 
 var server = app.listen(8080, function() {
     console.log('%s listening on %s', app.get('title'), server.address().port);
