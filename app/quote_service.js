@@ -55,6 +55,7 @@ function respond(req, res, next)
         return;
     }
 
+    res.set('Content-Type', 'text/json');
     if (isUpload(req)) {
         /* Never chunked. */
         req.on('data', function (data) {
