@@ -64,10 +64,7 @@ var enableCORS = function(req, res, next) {
 app.use(enableCORS);
 
 app.head('/quote', respond);
-app.del('/quote/:id', respond);
 app.post('/quote', respond);
-app.get('/quote/:id', respond);
-app.get('/quote', respond);
 
 app.use(tempDirname, express.static(__dirname + tempDirname));
 
