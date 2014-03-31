@@ -32,11 +32,6 @@ function isUpload(req)
 
 function respond(req, res, next)
 {
-    if ('HEAD' == req.method) {
-        res.send(200, 'OK');
-        return;
-    }
-
     res.set('Content-Type', 'text/json');
     if (isUpload(req)) {
         /* Never chunked. */
@@ -51,7 +46,6 @@ function respond(req, res, next)
     res.send(200, 'OK');
 }
 
-app.head('/quote', respond);
 app.post('/quote', respond);
 
 app.use(express.static(__dirname + uiDirname));
