@@ -23,27 +23,18 @@ function generateImage(res, model)
     });
 }
 
-function isUpload(req)
-{
-    var method = req.method;
-
-    return (method === 'PATH' || method === 'POST' || method === 'PUT');
-}
-
 function respond(req, res, next)
 {
     res.set('Content-Type', 'text/json');
-    if (isUpload(req)) {
-        /* Never chunked. */
-        req.on('data', function (data) {
-            var model = JSON.parse(data);
-            model.id = id++;
-            generateImage(res, model);
-        });
-        return;
-    }
 
-    res.send(200, 'OK');
+    /* Never chunked. */
+    req.on('data', function (data) {
+        var model = JSON.parse(data);
+        model.id = id++;
+        generateImage(res, model);
+    });
+
+    return;
 }
 
 app.post('/quote', respond);
