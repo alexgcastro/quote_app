@@ -7,22 +7,10 @@ var exec = require('child_process').exec;
 var text_rendering = require('./Release/text_rendering');
 
 // Variables.
-var Quotes = [];
 var id = 1;
 
 // Defines.
 var tempDirname = '/generated_images';
-
-function removeById(id)
-{
-    for(var i=0; i < Quotes.length; i++)
-    {
-        if(Quotes[i].id == id) {
-            Quotes.splice(i, 1);
-            return;
-        }
-    }
-}
 
 function generateImage(res, model)
 {
@@ -48,30 +36,18 @@ function respond(req, res, next)
         return;
     }
 
-    if ('DELETE' == req.method) {
-        console.log('Deleting %s!', req.params.id);
-        removeById(req.params.id);
-        res.send(200, 'OK');
-        return;
-    }
-
     res.set('Content-Type', 'text/json');
     if (isUpload(req)) {
         /* Never chunked. */
         req.on('data', function (data) {
             var model = JSON.parse(data);
             model.id = id++;
-            Quotes.push(model);
-            console.log('Received quote: ' + model.id + ' ' + model.text + ' ' + model.author + ' ' + model.template);
             generateImage(res, model);
         });
         return;
     }
 
-    if (req.params.id != undefined)
-        res.send(200, JSON.stringify(Quotes[req.params.id]));
-
-    res.send(200, JSON.stringify(Quotes));
+    res.send(200, 'OK');
 }
 
 var enableCORS = function(req, res, next) {

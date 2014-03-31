@@ -18,20 +18,18 @@ $(function(){
 
         url: 'http://localhost:8080/quote',
 
-        comparator: 'id',
+        comparator: 'id'
 
     });
 
     var Quotes = new QuoteList;
 
     var QuoteView = Backbone.View.extend({
-        tagName:  "li",
+        tagName:  "div",
+
+        className: "view",
 
         template: _.template($('#quote-template').html()),
-
-        events: {
-            "click a.destroy" : "clear",
-        },
 
         initialize: function() {
             this.listenTo(this.model, 'change', this.render);
@@ -41,10 +39,6 @@ $(function(){
         render: function() {
             this.$el.html(this.template(this.model.toJSON()));
             return this;
-        },
-
-        clear: function() {
-            this.model.destroy();
         }
 
     });
@@ -56,7 +50,6 @@ $(function(){
         events: {
             "keypress #text":  "createOnEnter",
             "keypress #author":  "createOnEnter",
-            "click #clear-quotes": "clearQuotes",
         },
 
         initialize: function() {
@@ -65,46 +58,27 @@ $(function(){
             this.author = this.$("#author");
             this.image = this.$("#image");
 
-            this.listenTo(Quotes, 'add', this.addOne);
-            this.listenTo(Quotes, 'all', this.render);
+            this.listenTo(Quotes, 'add', this.add);
 
             this.footer = this.$('footer');
             this.main = $('#main');
-
-            Quotes.fetch();
         },
 
-        render: function() {
-            if (Quotes.length) {
-                this.main.show();
-                this.footer.show();
-            } else {
-                this.main.hide();
-                this.footer.hide();
-            }
-        },
-
-        addOne: function(quote) {
+        add: function(quote) {
             var view = new QuoteView({model: quote});
-            this.$("#quote-list").append(view.render().el);
-        },
-
-        addAll: function() {
-            Quotes.each(this.addOne, this);
+            this.$("#main").append(view.render().el);
         },
 
         createOnEnter: function(e) {
             if (e.keyCode != 13) return;
             if (!this.text.val() || (!this.author.val())) return;
 
+            var oldQuote = Quotes.pop();
+            if (oldQuote) oldQuote.trigger('destroy');
+
             Quotes.create({text: this.text.val(), author: this.author.val(), template: 2});
             this.text.val('');
             this.author.val('');
-        },
-
-        clearQuotes: function() {
-            _.invoke(_.clone(Quotes.models), 'destroy');
-            return false;
         }
     });
 
