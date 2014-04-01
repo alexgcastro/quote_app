@@ -33,8 +33,6 @@ function respond(req, res, next)
         model.id = id++;
         generateImage(res, model);
     });
-
-    return;
 }
 
 app.post('/quote', respond);
