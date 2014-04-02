@@ -12,8 +12,7 @@ public:
   virtual ~Template() {};
   virtual void render(cairo_surface_t*, char*, char* , PangoLayout *, cairo_t *, int) = 0;
 
-  static const uint32_t BlueX = 1;
-  static const uint32_t BlackX = 2;
+  static Template* createTemplate(uint32_t);
 };
 
 } // namespace Quote.

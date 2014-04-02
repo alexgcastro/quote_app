@@ -4,8 +4,7 @@
 #include <stdlib.h>
 #include <v8.h>
 
-#include "TemplateBlueX.h"
-#include "TemplateBlackX.h"
+#include "Template.h"
 
 #define DEFAULT_LAYOUT_WIDTH 630
 
@@ -78,7 +77,6 @@ generate_image(uv_work_t *work_request)
   surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
                                        width, height);
 
-  /* Choose the right template to render. */
   imageTemplate->render(surface, text, author, NULL, NULL, layoutWidth);
 
   status = cairo_surface_write_to_png(surface, filename);
@@ -116,7 +114,6 @@ Handle<Value> Render(const Arguments& args) {
   char *author;
   uint32_t templateType;
   uv_work_t *workRequest;
-  Quote::Template* imageTemplate;
 
   if (args.Length() < 5) {
     ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
@@ -145,22 +142,13 @@ Handle<Value> Render(const Arguments& args) {
 
   workRequest = new uv_work_t;
 
-  switch (templateType) {
-    case Quote::Template::BlueX:
-      imageTemplate = new Quote::TemplateBlueX();
-      break;
-    case Quote::Template::BlackX:
-    default:
-      imageTemplate = new Quote::TemplateBlackX();
-  }
-
   asyncData = new AsyncData();
   workRequest->data = asyncData;
 
   asyncData->filename = filename;
   asyncData->text = text;
   asyncData->author = author;
-  asyncData->imageTemplate = imageTemplate;
+  asyncData->imageTemplate = Quote::Template::createTemplate(templateType);
   asyncData->callback = Persistent<Function>::New(Local<Function>::Cast(args[4]));
 
   uv_queue_work(

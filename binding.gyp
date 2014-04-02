@@ -5,6 +5,7 @@
       "sources": [ "text_rendering_addon/TemplateUtils.h",
                    "text_rendering_addon/TemplateUtils.cc",
                    "text_rendering_addon/Template.h",
+                   "text_rendering_addon/Template.cc",
                    "text_rendering_addon/TemplateBlueX.h",
                    "text_rendering_addon/TemplateBlueX.cc",
                    "text_rendering_addon/TemplateBlackX.h",
