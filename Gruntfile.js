@@ -11,11 +11,7 @@ module.exports = function(grunt) {
                     {expand: true, src: ['app/quote_service.js'],
                      dest: 'build', flatten: true},
                     {expand: true, src: ['text_rendering_addon/black_texture_tile.png'],
-                     dest: 'build', flatten: true},
-                    {expand: true, src: ['node_modules/restify'],
-                     dest: 'build'},
-                    {expand: true, src: ['node_modules/temp'],
-                     dest: 'build'}
+                     dest: 'build', flatten: true}
                 ]
             }
         },
