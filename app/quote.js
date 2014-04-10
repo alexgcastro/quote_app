@@ -65,7 +65,7 @@ require(['underscore', 'jquery', 'backbone'], function() {
 
         add: function(quote) {
             var view = new QuoteView({model: quote});
-            this.$("#main").append(view.render().el);
+            this.main.append(view.render().el);
         },
 
         createOnEnter: function(e) {
