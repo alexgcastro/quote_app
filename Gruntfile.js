@@ -20,9 +20,9 @@ module.exports = function(grunt) {
             dev: {
                 files: {
                     'build/ui/quote.js':
-                    ['node_modules/backbone/node_modules/underscore/underscore.js',
-                     'node_modules/jquery/dist/jquery.js',
-                     'node_modules/backbone/backbone.js',
+                    ['bower_components/underscore/underscore.js',
+                     'bower_components/jquery/dist/jquery.js',
+                     'bower_components/backbone/backbone.js',
                      'app/quote.js']
                 }
             }
@@ -30,7 +30,7 @@ module.exports = function(grunt) {
 
         clean: {
             dev: {
-                src: ['build', 'node_modules']
+                src: ['build', 'node_modules', 'bower_components']
             }
         }
 
