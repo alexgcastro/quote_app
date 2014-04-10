@@ -60,7 +60,6 @@ require(['underscore', 'jquery', 'backbone'], function() {
 
             this.listenTo(Quotes, 'add', this.add);
 
-            this.footer = this.$('footer');
             this.main = $('#main');
         },
 
