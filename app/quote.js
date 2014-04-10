@@ -1,4 +1,4 @@
-$(function(){
+require(['underscore', 'jquery', 'backbone'], function() {
 
     var Quote = Backbone.Model.extend({
 

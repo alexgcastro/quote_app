@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         copy: {
             dev: {
                 files: [
-                    {expand: true, src: ['app/index.html', 'app/quote.css'],
+                    {expand: true, src: ['app/index.html', 'app/quote.css', 'app/quote.js'],
                      dest: 'build/ui', flatten: true},
                     {expand: true, src: ['app/quote_service.js'],
                      dest: 'build', flatten: true},
@@ -16,14 +16,18 @@ module.exports = function(grunt) {
             }
         },
 
-        concat: {
-            dev: {
-                files: {
-                    'build/ui/quote.js':
-                    ['bower_components/underscore/underscore.js',
-                     'bower_components/jquery/dist/jquery.js',
-                     'bower_components/backbone/backbone.js',
-                     'app/quote.js']
+        bower: {
+            install: {
+                options: {
+                    targetDir: './build/ui',
+                    layout: function(type, component) {
+                        return "";
+                    },
+                    install: true,
+                    verbose: true,
+                    cleanTargetDir: false,
+                    cleanBowerDir: false,
+                    bowerOptions: {}
                 }
             }
         },
@@ -39,10 +43,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-bower-task');
 
     grunt.registerTask('cdirectory', 'Create generated images directory', function() {
         grunt.file.mkdir('build/generated_images')
     });
 
-    grunt.registerTask('default', ['copy', 'concat', 'cdirectory']);
+    grunt.registerTask('default', ['copy', 'bower', 'cdirectory']);
 };
