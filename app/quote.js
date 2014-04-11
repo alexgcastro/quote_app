@@ -60,8 +60,8 @@ require(['jquery', 'backbone', 'react'], function($, Backbone, React) {
             React.renderComponent(<QuoteView quote={_.clone(quote.attributes)} />, this.main.get(0));
         },
 
-        createOnEnter: function(e) {
-            if (e.keyCode != 13) return;
+        createOnEnter: function(key) {
+            if (key.keyCode != 13) return;
             if (!this.text.val() || (!this.author.val())) return;
 
             var oldQuote = Quotes.pop();
