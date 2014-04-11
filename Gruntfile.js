@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         copy: {
             dev: {
                 files: [
-                    {expand: true, src: ['app/index.html', 'app/quote.css', 'app/quote.js'],
+                    {expand: true, src: ['app/index.html', 'app/quote.css', 'app/quote.js', 'third_party/jsx.js'],
                      dest: 'build/ui', flatten: true},
                     {expand: true, src: ['app/quote_service.js'],
                      dest: 'build', flatten: true},

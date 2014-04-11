@@ -1,4 +1,4 @@
-require(['underscore', 'jquery', 'backbone'], function() {
+require(['jquery', 'backbone', 'react'], function($, Backbone, React) {
 
     var Quote = Backbone.Model.extend({
 
@@ -24,23 +24,15 @@ require(['underscore', 'jquery', 'backbone'], function() {
 
     var Quotes = new QuoteList;
 
-    var QuoteView = Backbone.View.extend({
-        tagName:  "div",
+    var QuoteView = React.createClass({
+        render: function () {
+            if (!this.props.quote)
+                return <div> </div>;
 
-        className: "view",
+            var quote = this.props.quote;
 
-        template: _.template($('#quote-template').html()),
-
-        initialize: function() {
-            this.listenTo(this.model, 'change', this.render);
-            this.listenTo(this.model, 'destroy', this.remove);
-        },
-
-        render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
-            return this;
+            return <img src={quote.image} alt={quote.text+" -- "+quote.author}></img>;
         }
-
     });
 
     var AppView = Backbone.View.extend({
@@ -58,14 +50,14 @@ require(['underscore', 'jquery', 'backbone'], function() {
             this.author = this.$("#author");
             this.image = this.$("#image");
 
-            this.listenTo(Quotes, 'add', this.add);
+            this.listenTo(Quotes, 'add', this.renderQuote);
+            this.listenTo(Quotes, 'change', this.renderQuote);
 
             this.main = $('#main');
         },
 
-        add: function(quote) {
-            var view = new QuoteView({model: quote});
-            this.main.append(view.render().el);
+        renderQuote: function(quote) {
+            React.renderComponent(<QuoteView quote={_.clone(quote.attributes)} />, this.main.get(0));
         },
 
         createOnEnter: function(e) {
@@ -76,6 +68,7 @@ require(['underscore', 'jquery', 'backbone'], function() {
             if (oldQuote) oldQuote.trigger('destroy');
 
             Quotes.create({text: this.text.val(), author: this.author.val(), template: 2});
+
             this.text.val('');
             this.author.val('');
         }
