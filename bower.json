@@ -9,7 +9,7 @@
   },
   "exportsOverride": {
       "react": {
-      "": "JSXTransformer.js"
+      "js": ["react.js", "JSXTransformer.js"]
     }
   }
 }
