@@ -39,11 +39,11 @@ require(['jquery', 'backbone', 'react'], function($, Backbone, React) {
             if (!quote)
                 return <div> </div>;
 
-            return <img src={quote.image} alt={quote.text+" -- "+quote.author}></img>;
+            return <img src={quote.get("image")} alt={quote.get("text")+" -- "+quote.get("author")}></img>;
         },
 
         doRender: function(quote) {
-            this.setState({quote: _.clone(quote.attributes)});
+            this.setState({quote: quote});
         },
 
         createQuote: function(key) {
