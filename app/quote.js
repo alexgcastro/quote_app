@@ -34,7 +34,7 @@ require(['jquery', 'backbone', 'react'], function($, Backbone, React) {
         },
 
         render: function() {
-            var quote = this.props.quote;
+            var quote = this.state.quote;
 
             if (!quote)
                 return <div> </div>;
@@ -43,7 +43,7 @@ require(['jquery', 'backbone', 'react'], function($, Backbone, React) {
         },
 
         doRender: function(quote) {
-            React.renderComponent(<QuoteView quote={_.clone(quote.attributes)} />, this.main.get(0));
+            this.setState({quote: _.clone(quote.attributes)});
         },
 
         createQuote: function(key) {
