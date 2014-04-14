@@ -34,10 +34,10 @@ require(['jquery', 'backbone', 'react'], function($, Backbone, React) {
         },
 
         render: function() {
-            if (!this.props.quote)
-                return <div> </div>;
-
             var quote = this.props.quote;
+
+            if (!quote)
+                return <div> </div>;
 
             return <img src={quote.image} alt={quote.text+" -- "+quote.author}></img>;
         },
