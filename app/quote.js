@@ -23,8 +23,8 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
             this.author = $("#author");
 
             this.quotes = new QuoteList;
-            this.quotes.on("add", this.doRender);
-            this.quotes.on("change", this.doRender);
+            this.quotes.on("add", this.changeState);
+            this.quotes.on("change", this.changeState);
 
             $("#text").bind("keypress", this.createQuote);
             $("#author").bind("keypress", this.createQuote);
@@ -41,7 +41,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
             return <img src={quote.get("image")} alt={quote.get("text")+" -- "+quote.get("author")}></img>;
         },
 
-        doRender: function(quote) {
+        changeState: function(quote) {
             this.setState({quote: quote});
         },
 
