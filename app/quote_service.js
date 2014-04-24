@@ -4,6 +4,7 @@ var express = require('express');
 var temp = require('temp');
 var app = express();
 var text_rendering = require('./Release/text_rendering');
+var mongoose = require('mongoose');
 
 // Variables.
 var id = 1;
@@ -11,6 +12,24 @@ var id = 1;
 // Defines.
 var tempDirname = '/generated_images';
 var uiDirname = '/ui';
+
+mongoose.connect('mongodb://localhost/quoteapp');
+
+var QuoteSchema = mongoose.Schema({
+    author: String,
+    text: String,
+    template: Number,
+    image: String
+});
+
+var Quote = mongoose.model('Quote', QuoteSchema);
+
+var db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+    console.log('Connection to db opened correctly!');
+});
 
 function generateImage(res, model)
 {
@@ -20,7 +39,15 @@ function generateImage(res, model)
         model.image = 'http://localhost:8080' + tempFilename;
         res.send(200, model);
     });
+
+    var theQuote = new Quote({author: model.author, text: model.text, template: model.template, image: tempFilename});
+
+    theQuote.save(function (err) {
+        if (err) return console.error(err);
+    });
 }
+
+
 
 function respond(req, res, next)
 {

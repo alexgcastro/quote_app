@@ -13,6 +13,7 @@
     },
     "dependencies": {
         "express": "3.4.8",
-        "temp": "0.7.0"
+        "temp": "0.7.0",
+        "mongoose": "3.8.8"
     }
 }
