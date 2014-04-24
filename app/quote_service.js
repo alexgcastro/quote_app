@@ -3,7 +3,6 @@
 var express = require('express');
 var temp = require('temp');
 var app = express();
-var exec = require('child_process').exec;
 var text_rendering = require('./Release/text_rendering');
 
 // Variables.
