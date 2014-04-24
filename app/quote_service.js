@@ -6,9 +6,6 @@ var app = express();
 var text_rendering = require('./Release/text_rendering');
 var mongoose = require('mongoose');
 
-// Variables.
-var id = 1;
-
 // Defines.
 var tempDirname = '/generated_images';
 var uiDirname = '/ui';
@@ -45,9 +42,9 @@ function generateImage(res, model)
     theQuote.save(function (err) {
         if (err) return console.error(err);
     });
+
+    model.id = theQuote._id;
 }
-
-
 
 function respond(req, res, next)
 {
@@ -56,7 +53,6 @@ function respond(req, res, next)
     /* Never chunked. */
     req.on('data', function (data) {
         var model = JSON.parse(data);
-        model.id = id++;
         generateImage(res, model);
     });
 }
