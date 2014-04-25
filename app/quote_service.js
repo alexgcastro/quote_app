@@ -33,7 +33,7 @@ function generateImage(res, model)
     var tempFilename = temp.path({dir: tempDirname, prefix: 'quote', suffix: '.png'});
 
     text_rendering.render(__dirname + tempFilename, model.text, model.author, model.template, function () {
-        model.image = 'http://localhost:8080' + tempFilename;
+        model.image = tempFilename;
         res.send(200, model);
     });
 
