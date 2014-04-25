@@ -50,12 +50,12 @@ function respondGET(req, res, next)
 {
     res.set('Content-Type', 'text/json');
 
-    if (req.params.quoteID === undefined) {
+    if (req.query.id === undefined) {
         res.send(200, {});
         return;
     }
 
-    Quote.findById(req.params.quoteID).exec(function(err, model) {
+    Quote.findById(req.query.id).exec(function(err, model) {
         if (err) {
             res.send(200, {});
             return;
@@ -77,7 +77,7 @@ function respondPOST(req, res, next)
 }
 
 app.post('/quoteService', respondPOST);
-app.get('/quoteService/:quoteID', respondGET);
+app.get('/quoteService', respondGET);
 
 app.use(express.static(__dirname + uiDirname));
 app.use(tempDirname, express.static(__dirname + tempDirname));

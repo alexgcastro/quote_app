@@ -17,6 +17,15 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
         comparator: "id"
     });
 
+    var Router = Backbone.Router.extend({
+        routes: {
+            "quote/:quoteID": "getQuote",
+            "*action": "default"
+        }
+    });
+
+    var router = new Router;
+
     var QuoteView = React.createClass({
         getInitialState: function() {
             this.text = $("#text");
@@ -28,6 +37,9 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
             $("#text").bind("keypress", this.createQuote);
             $("#author").bind("keypress", this.createQuote);
+
+            if (this.props.quoteID)
+                this.quotes.fetch({data: {id: this.props.quoteID}});
 
             return {quote: null};
         },
@@ -43,6 +55,9 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
         changeState: function(quote) {
             this.setState({quote: quote});
+            var id = quote.get("id");
+            if (id !== undefined)
+                router.navigate("quote/"+id);
         },
 
         createQuote: function(key) {
@@ -60,5 +75,13 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
     });
 
-    React.renderComponent(<QuoteView />, $("#main").get(0));
+    router.on("route:getQuote", function(quoteID) {
+        React.renderComponent(<QuoteView quoteID={quoteID} />, $("#main").get(0));
+    });
+
+    router.on("route:default", function() {
+        React.renderComponent(<QuoteView />, $("#main").get(0));
+    });
+
+    Backbone.history.start();
 });
