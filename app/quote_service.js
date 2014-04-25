@@ -58,7 +58,7 @@ function respondGET(req, res, next)
     Quote.findById(req.query.id).exec(function(err, model) {
         if (err) {
             res.send(200, {});
-            return;
+            return console.error(err);
         };
 
         res.send(200, model);
