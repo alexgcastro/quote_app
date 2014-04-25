@@ -46,7 +46,26 @@ function generateImage(res, model)
     model.id = theQuote._id;
 }
 
-function respond(req, res, next)
+function respondGET(req, res, next)
+{
+    res.set('Content-Type', 'text/json');
+
+    if (req.params.quoteID === undefined) {
+        res.send(200, {});
+        return;
+    }
+
+    Quote.findById(req.params.quoteID).exec(function(err, model) {
+        if (err) {
+            res.send(200, {});
+            return;
+        };
+
+        res.send(200, model);
+    });
+}
+
+function respondPOST(req, res, next)
 {
     res.set('Content-Type', 'text/json');
 
@@ -57,7 +76,8 @@ function respond(req, res, next)
     });
 }
 
-app.post('/quote', respond);
+app.post('/quoteService', respondPOST);
+app.get('/quoteService/:quoteID', respondGET);
 
 app.use(express.static(__dirname + uiDirname));
 app.use(tempDirname, express.static(__dirname + tempDirname));
