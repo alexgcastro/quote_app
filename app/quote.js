@@ -19,6 +19,8 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
     var quotes = new QuoteList;
 
+    /* The router events are defined after creating the rendering
+     * component and the list. */
     var Router = Backbone.Router.extend({
         routes: {
             "quote/:quoteID": "getQuote",
@@ -29,36 +31,12 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
     var router = new Router;
 
     var QuoteView = React.createClass({
-        getInitialState: function() {
-            this.text = $("#text");
-            this.author = $("#author");
-
-            $("#text").bind("keypress", this.createQuote);
-            $("#author").bind("keypress", this.createQuote);
-
-            return null;
-        },
-
         render: function() {
             if (!this.props.image)
                 return <div> </div>;
 
             return <img src={this.props.image} alt={this.props.text+" -- "+this.props.author}></img>;
-        },
-
-        createQuote: function(key) {
-            if (key.keyCode != 13) return;
-            if (!this.text.val() || (!this.author.val())) return;
-
-            var oldQuote = quotes.pop();
-            if (oldQuote) oldQuote.trigger("destroy");
-
-            quotes.create({text: this.text.val(), author: this.author.val(), template: 2, navigate: true});
-
-            this.text.val("");
-            this.author.val("");
         }
-
     });
 
     function quoteChanged(quote) {
@@ -87,4 +65,20 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
     });
 
     Backbone.history.start();
+
+    function createQuote(key) {
+        if (key.keyCode != 13) return;
+        if (!$("#text").val() || (!$("#author").val())) return;
+
+        var oldQuote = quotes.pop();
+        if (oldQuote) oldQuote.trigger("destroy");
+
+        quotes.create({text: $("#text").val(), author: $("#author").val(), template: 2, navigate: true});
+
+        $("#text").val("");
+        $("#author").val("");
+    }
+
+    $("#text").bind("keypress", createQuote);
+    $("#author").bind("keypress", createQuote);
 });
