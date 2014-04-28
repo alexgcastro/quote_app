@@ -17,6 +17,8 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
         comparator: "id"
     });
 
+    var quotes = new QuoteList;
+
     var Router = Backbone.Router.extend({
         routes: {
             "quote/:quoteID": "getQuote",
@@ -31,43 +33,27 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
             this.text = $("#text");
             this.author = $("#author");
 
-            this.quotes = new QuoteList;
-            this.quotes.on("add", this.changeState);
-            this.quotes.on("change", this.changeState);
-
             $("#text").bind("keypress", this.createQuote);
             $("#author").bind("keypress", this.createQuote);
 
-            if (this.props.quoteID)
-                this.quotes.fetch({data: {id: this.props.quoteID}});
-
-            return {quote: null};
+            return null;
         },
 
         render: function() {
-            var quote = this.state.quote;
-
-            if (!quote)
+            if (!this.props.image)
                 return <div> </div>;
 
-            return <img src={quote.get("image")} alt={quote.get("text")+" -- "+quote.get("author")}></img>;
-        },
-
-        changeState: function(quote) {
-            this.setState({quote: quote});
-            var id = quote.get("id");
-            if (id !== undefined)
-                router.navigate("quote/"+id);
+            return <img src={this.props.image} alt={this.props.text+" -- "+this.props.author}></img>;
         },
 
         createQuote: function(key) {
             if (key.keyCode != 13) return;
             if (!this.text.val() || (!this.author.val())) return;
 
-            var oldQuote = this.quotes.pop();
+            var oldQuote = quotes.pop();
             if (oldQuote) oldQuote.trigger("destroy");
 
-            this.quotes.create({text: this.text.val(), author: this.author.val(), template: 2});
+            quotes.create({text: this.text.val(), author: this.author.val(), template: 2, navigate: true});
 
             this.text.val("");
             this.author.val("");
@@ -75,8 +61,25 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
     });
 
+    function quoteChanged(quote) {
+        var id = quote.get("_id");
+
+        if (id === undefined)
+            return;
+
+        React.renderComponent(<QuoteView image={quote.get("image")} text={quote.get("text")} author={quote.get("author")} />, $("#main").get(0));
+
+        if (quote.get("navigate")) router.navigate("quote/"+id);
+    }
+
+    quotes.on("add", quoteChanged);
+    quotes.on("change", quoteChanged);
+
     router.on("route:getQuote", function(quoteID) {
-        React.renderComponent(<QuoteView quoteID={quoteID} />, $("#main").get(0));
+        var oldQuote = quotes.pop();
+        if (oldQuote) oldQuote.trigger("destroy");
+
+        quotes.fetch({data: {id: quoteID}});
     });
 
     router.on("route:default", function() {
