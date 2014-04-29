@@ -14,7 +14,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
     var QuoteList = Backbone.Collection.extend({
         model: Quote,
         url: "http://localhost:8080/quoteService",
-        comparator: "id"
+        idAttribute: "_id"
     });
 
     var quotes = new QuoteList;
