@@ -45,6 +45,8 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
         if (id === undefined)
             return;
 
+        document.title = "Quote from "+quote.get("author");
+
         React.renderComponent(<QuoteView image={quote.get("image")} text={quote.get("text")} author={quote.get("author")} />, $("#main").get(0));
 
         if (quote.get("navigate")) router.navigate("quote/"+id);
