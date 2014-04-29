@@ -14,7 +14,11 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
     var QuoteList = Backbone.Collection.extend({
         model: Quote,
         url: "http://localhost:8080/quoteService",
-        idAttribute: "_id"
+        idAttribute: "_id",
+        destroyLastQuote: function() {
+            var oldQuote = this.pop();
+            if (oldQuote) oldQuote.trigger("destroy");
+        }
     });
 
     var quotes = new QuoteList;
@@ -56,9 +60,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
     quotes.on("change", quoteChanged);
 
     router.on("route:getQuote", function(quoteID) {
-        var oldQuote = quotes.pop();
-        if (oldQuote) oldQuote.trigger("destroy");
-
+        quotes.destroyLastQuote();
         quotes.fetch({data: {id: quoteID}});
     });
 
@@ -72,9 +74,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
         if (key.keyCode != 13) return;
         if (!$("#text").val() || (!$("#author").val())) return;
 
-        var oldQuote = quotes.pop();
-        if (oldQuote) oldQuote.trigger("destroy");
-
+        quotes.destroyLastQuote();
         quotes.create({text: $("#text").val(), author: $("#author").val(), template: 2, navigate: true});
 
         $("#text").val("");
