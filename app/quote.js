@@ -64,7 +64,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
         React.renderComponent(<QuoteView />, $("#main").get(0));
     });
 
-    Backbone.history.start();
+    Backbone.history.start({pushState: true});
 
     function createQuote(key) {
         if (key.keyCode != 13) return;

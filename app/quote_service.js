@@ -78,6 +78,10 @@ app.get('/quoteService', respondGET);
 
 app.use(express.static(__dirname + uiDirname));
 app.use(tempDirname, express.static(__dirname + tempDirname));
+app.use('/quote', express.static(__dirname + uiDirname));
+app.get(/^\/quote\/(\w+){23}$/, function(req, res, next) {
+    res.sendfile(__dirname+uiDirname+'/index.html');
+});
 
 app.set('title', 'Quote app');
 
