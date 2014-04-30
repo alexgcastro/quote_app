@@ -37,9 +37,8 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
     function fetchQuote(id) {
         $.ajax({
-            url: '/quoteService',
+            url: '/quoteService/'+id,
             async: true,
-            data:  {id: id},
             dataType: 'json',
             type: 'GET',
             success: function(attributes) {
