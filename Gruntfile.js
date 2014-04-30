@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         copy: {
             dev: {
                 files: [
-                    {expand: true, src: ['app/index.html', 'app/quote.css', 'app/quote.js', 'third_party/jsx.js'],
+                    {expand: true, src: ['app/index.html', 'app/quote.css'],
                      dest: 'build/ui', flatten: true},
                     {expand: true, src: ['app/quote_service.js'],
                      dest: 'build', flatten: true},
@@ -38,6 +38,14 @@ module.exports = function(grunt) {
             }
         },
 
+        react: {
+            single_file_output: {
+                files: {
+                    'build/ui/quote.js': 'app/quote.jsx'
+                }
+            }
+        },
+
         jshint: {
             all: ['Gruntfile.js', 'app/*.js']
         }
@@ -48,10 +56,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-react');
 
     grunt.registerTask('cdirectory', 'Create generated images directory', function() {
         grunt.file.mkdir('build/generated_images')
     });
 
-    grunt.registerTask('default', ['jshint', 'copy', 'bower', 'cdirectory']);
+    grunt.registerTask('default', ['react', 'jshint', 'copy', 'bower', 'cdirectory']);
 };

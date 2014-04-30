@@ -1,3 +1,4 @@
+/** @jsx React.DOM */
 require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
     /* Backbone model, collection and router definition. */
