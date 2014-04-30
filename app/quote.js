@@ -1,5 +1,6 @@
 require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
+    /* Backbone model, collection and router definition. */
     var Quote = Backbone.Model.extend({
         defaults: function() {
             return {
@@ -34,6 +35,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
     var router = new Router;
 
+    /* React component that renders the quote. */
     var QuoteView = React.createClass({
         render: function() {
             if (!this.props.image)
@@ -43,6 +45,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
         }
     });
 
+    /* Quote collection events handler. */
     function quoteChanged(quote) {
         var id = quote.get("_id");
 
@@ -59,6 +62,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
     quotes.on("add", quoteChanged);
     quotes.on("change", quoteChanged);
 
+    /* App routes definition. */
     router.on("route:getQuote", function(quoteID) {
         quotes.destroyLastQuote();
         quotes.fetch({data: {id: quoteID}});
@@ -70,12 +74,13 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
     Backbone.history.start({pushState: true});
 
+    /* Form events handlers. */
     function createQuote(key) {
         if (key.keyCode != 13) return;
         if (!$("#text").val() || (!$("#author").val())) return;
 
         quotes.destroyLastQuote();
-        quotes.create({text: $("#text").val(), author: $("#author").val(), template: 2, navigate: true});
+        quotes.create({text: $("#text").val(), author: $("#author").val(), template: 1, navigate: true});
 
         $("#text").val("");
         $("#author").val("");
