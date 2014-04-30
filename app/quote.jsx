@@ -23,7 +23,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
         }
     });
 
-    var quotes = new QuoteList;
+    var quotes = new QuoteList();
 
     /* The router events are defined after creating the rendering
      * component and the list. */
@@ -34,7 +34,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
         }
     });
 
-    var router = new Router;
+    var router = new Router();
 
     /* React component that renders the quote. */
     var QuoteView = React.createClass({

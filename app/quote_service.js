@@ -56,7 +56,7 @@ function respondGET(req, res, next)
         if (err) {
             res.send(200, {});
             return console.error(err);
-        };
+        }
 
         res.send(200, model);
     });

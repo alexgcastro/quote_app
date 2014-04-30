@@ -59,7 +59,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-react');
 
     grunt.registerTask('cdirectory', 'Create generated images directory', function() {
-        grunt.file.mkdir('build/generated_images')
+        grunt.file.mkdir('build/generated_images');
     });
 
     grunt.registerTask('default', ['react', 'jshint', 'copy', 'bower', 'cdirectory']);
