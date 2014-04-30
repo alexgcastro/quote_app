@@ -47,7 +47,7 @@ module.exports = function(grunt) {
         },
 
         jshint: {
-            all: ['Gruntfile.js', 'app/*.js']
+            all: ['Gruntfile.js', 'app/*.js', 'build/ui/quote.js']
         }
 
     });
