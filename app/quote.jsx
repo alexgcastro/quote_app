@@ -1,76 +1,69 @@
 /** @jsx React.DOM */
 require(["jquery", "backbone", "react"], function($, Backbone, React) {
 
-    /* Backbone model, collection and router definition. */
-    var Quote = Backbone.Model.extend({
-        defaults: function() {
-            return {
-                text: null,
-                author: null,
-                image: null,
-                template: null
-            };
-        },
-    });
-
-    var QuoteList = Backbone.Collection.extend({
-        model: Quote,
-        url: "http://localhost:8080/quoteService",
-        idAttribute: "_id",
-        destroyLastQuote: function() {
-            var oldQuote = this.pop();
-            if (oldQuote) oldQuote.trigger("destroy");
+    /* React component that renders the quote. */
+    var QuoteView = React.createClass({
+        render: function() {
+            return <img src={this.props.image} alt={this.props.text+" -- "+this.props.author}></img>;
         }
     });
 
-    var quotes = new QuoteList();
+    function renderQuote(quote) {
+        if (quote._id === undefined)
+            return;
 
-    /* The router events are defined after creating the rendering
-     * component and the list. */
+        document.title = "Quote from "+quote.author;
+
+        React.renderComponent(<QuoteView image={quote.image} text={quote.text} author={quote.author} />, $("#main").get(0));
+    }
+
+
+    /*  Quote persistence. */
+    function generateQuote(text, author, template) {
+        $.ajax({
+            url: '/quoteService',
+            async: true,
+            data: JSON.stringify({text: text,
+                                  author: author,
+                                  template: template}),
+            dataType: 'json',
+            type: 'POST',
+            success: function(attributes) {
+                router.navigate("quote/"+attributes._id);
+                renderQuote(attributes);
+            }
+        });
+    }
+
+    function fetchQuote(id) {
+        $.ajax({
+            url: '/quoteService',
+            async: true,
+            data:  {id: id},
+            dataType: 'json',
+            type: 'GET',
+            success: function(attributes) {
+                renderQuote(attributes);
+            }
+        });
+    }
+
+    /* App routes definition. */
     var Router = Backbone.Router.extend({
         routes: {
-            "quote/:quoteID": "getQuote",
+            "quote/:id": "getQuote",
             "*action": "default"
         }
     });
 
     var router = new Router();
 
-    /* React component that renders the quote. */
-    var QuoteView = React.createClass({
-        render: function() {
-            if (!this.props.image)
-                return <div> </div>;
-
-            return <img src={this.props.image} alt={this.props.text+" -- "+this.props.author}></img>;
-        }
-    });
-
-    /* Quote collection events handler. */
-    function quoteChanged(quote) {
-        var id = quote.get("_id");
-
-        if (id === undefined)
-            return;
-
-        document.title = "Quote from "+quote.get("author");
-
-        React.renderComponent(<QuoteView image={quote.get("image")} text={quote.get("text")} author={quote.get("author")} />, $("#main").get(0));
-
-        if (quote.get("navigate")) router.navigate("quote/"+id);
-    }
-
-    quotes.on("add", quoteChanged);
-    quotes.on("change", quoteChanged);
-
-    /* App routes definition. */
-    router.on("route:getQuote", function(quoteID) {
-        quotes.destroyLastQuote();
-        quotes.fetch({data: {id: quoteID}});
+    router.on("route:getQuote", function(id) {
+        fetchQuote(id);
     });
 
     router.on("route:default", function() {
-        React.renderComponent(<QuoteView />, $("#main").get(0));
+        renderQuote({});
     });
 
     Backbone.history.start({pushState: true});
@@ -80,8 +73,7 @@ require(["jquery", "backbone", "react"], function($, Backbone, React) {
         if (key.keyCode != 13) return;
         if (!$("#text").val() || (!$("#author").val())) return;
 
-        quotes.destroyLastQuote();
-        quotes.create({text: $("#text").val(), author: $("#author").val(), template: 1, navigate: true});
+        generateQuote($("#text").val(), $("#author").val(), 1);
 
         $("#text").val("");
         $("#author").val("");
