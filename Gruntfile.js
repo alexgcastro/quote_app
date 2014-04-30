@@ -36,6 +36,10 @@ module.exports = function(grunt) {
             dev: {
                 src: ['build', 'node_modules', 'bower_components']
             }
+        },
+
+        jshint: {
+            all: ['Gruntfile.js', 'app/*.js']
         }
 
     });
@@ -43,10 +47,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-bower-task');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
     grunt.registerTask('cdirectory', 'Create generated images directory', function() {
         grunt.file.mkdir('build/generated_images')
     });
 
-    grunt.registerTask('default', ['copy', 'bower', 'cdirectory']);
+    grunt.registerTask('default', ['jshint', 'copy', 'bower', 'cdirectory']);
 };
